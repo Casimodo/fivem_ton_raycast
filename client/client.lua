@@ -274,39 +274,39 @@ end
 -- end)
 
 
-local Framework = nil
+local Framework = Config.Framework
 local PlayerData = {}
 
-CreateThread(function()
-    if GetResourceState('es_extended') == 'started' then
-        Framework = "ESX"
-        ESX = exports['es_extended']:getSharedObject()
+if Framework == "ESX" then
 
-        -- Chargement des données du joueur pour ESX
-        while not ESX.IsPlayerLoaded() do
-            Wait(100)
-        end
-        PlayerData = ESX.GetPlayerData()
-
-    elseif GetResourceState('qb-core') == 'started' then
-        Framework = "QBcore"
-        QBCore = exports['qb-core']:GetCoreObject()
-
-        -- Chargement des données du joueur pour QBcore
-        CreateThread(function()
-            while QBCore.Functions.GetPlayerData() == nil do
-                Wait(100)
-            end
-            PlayerData = QBCore.Functions.GetPlayerData()
-        end)
-
-    else
-        Framework = "Qbox"
-        print("^3Framework non détecté, utilisation par défaut : Qbox.^0")
+    local ESX = exports['es_extended']:getSharedObject()
+    -- Chargement des données du joueur pour ESX
+    while not ESX.IsPlayerLoaded() do
+        Wait(100)
     end
+    PlayerData = ESX.GetPlayerData()
 
-    print("^2Framework détecté : " .. (Framework or "Aucun") .. "^0")
-end)
+elseif Framework == "QBcore" then
+
+    local QBCore = exports['qb-core']:GetCoreObject()
+    -- Chargement des données du joueur pour QBcore
+    while QBCore.Functions.GetPlayerData() == nil do
+        Wait(100)
+    end
+    PlayerData = QBCore.Functions.GetPlayerData()
+
+elseif Framework == "Qbox" then
+
+    local Qbox = exports['qb-core']:GetCoreObject()
+    -- Chargement des données du joueur pour QBcore
+    while Qbox.Functions.GetPlayerData() == nil do
+        Wait(100)
+    end
+    PlayerData = Qbox.Functions.GetPlayerData()
+    
+else
+    print("^Erreur : Framework mal configuré !^0")
+end
 
 -- Envoi d'une notification (compatible avec plusieurs frameworks)
 local function SendNotification(type, message)
@@ -323,17 +323,17 @@ end
 
 -- Fonction pour enregistrer la commande selon le framework
 local function RegisterCommandFramework(commandName, callback)
-    if Framework == "ESX" then
+    if ESX then
         ESX.RegisterCommand(commandName, "admin", function(xPlayer)
             callback(xPlayer)
         end, true)
-    elseif Framework == "QBcore" then
+    elseif QBCore then
         QBCore.Commands.Add(commandName, "Admin command", {}, false, function(source)
             local Player = QBCore.Functions.GetPlayer(source)
             callback(Player)
         end)
-    elseif Framework == "Qbox" then
-        Qbox.Commands.Register(commandName, "admin", {}, function(source)
+    elseif Qbox then
+        Qbox.Commands.Add(commandName, "Admin command", {}, false, function(source)
             callback(source)
         end)
     else

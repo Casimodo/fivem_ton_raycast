@@ -6,38 +6,23 @@
 
 
 -- Détection automatique du framework
-local Framework = nil
+local Framework = Config.Framework
 
-CreateThread(function()
-    if GetResourceState('es_extended') == 'started' then
-        Framework = "ESX"
-        ESX = exports['es_extended']:getSharedObject()
-    elseif GetResourceState('qbx_core') == 'started' then
-        Framework = "Qbox"
-        --Qbox = exports['qbx_core']
-        Qbox = exports['qb-core']:GetCoreObject()
-    elseif GetResourceState('qb-core') == 'started' then
-        Framework = "QBcore"
-        QBCore = exports['qb-core']:GetCoreObject()
-    else
-        Framework = "inc"
-        print("^3Framework non détecté, utilisation par défaut : Error !")
-    end
-
-    print("^2Framework détecté : " .. (Framework or "Aucun") .. "^0")
-end)
-
-function EnsureFrameworkLoaded()
-    while Framework == nil do
-        print("^3En attente de la détection du framework...^0")
-        Wait(100)
-    end
+if Framework == "ESX" then
+    ESX = exports['es_extended']:getSharedObject()
+elseif Framework == "Qbox" then
+    --Qbox = exports['qbx_core']
+    Qbox = exports['qb-core']:GetCoreObject()
+elseif Framework == "QBcore" then
+    QBCore = exports['qb-core']:GetCoreObject()
+else
+    Framework = "inc"
+    print("^3Framework non détecté, utilisation par défaut : Error !")
 end
+print("^2Framework config : " .. (Framework or "Aucun") .. "^0")
 
 -- Fonction pour enregistrer la commande en fonction du framework
 local function RegisterCommandFramework(commandName, permission, callback)
-
-	EnsureFrameworkLoaded() -- Attente jusqu'à ce que le framework soit chargé
 
     if ESX then
         -- ESX
@@ -61,7 +46,7 @@ local function RegisterCommandFramework(commandName, permission, callback)
 end
 
 -- Appel de la fonction pour enregistrer la commande
-RegisterCommandFramework("ton_raycast", "admin", function(player)
+RegisterCommandFramework("ton_raycast", "", function(player)
     if ESX then
         -- Envoi d'un événement pour ESX
         player.triggerEvent("ton_raycast:show")
