@@ -275,18 +275,37 @@ end
 
 
 local Framework = nil
+local PlayerData = {}
 
--- Détecte automatiquement le framework utilisé
 CreateThread(function()
-    if ESX ~= nil then
+    if GetResourceState('es_extended') == 'started' then
         Framework = "ESX"
-    elseif QBCore ~= nil then
+        ESX = exports['es_extended']:getSharedObject()
+
+        -- Chargement des données du joueur pour ESX
+        while not ESX.IsPlayerLoaded() do
+            Wait(100)
+        end
+        PlayerData = ESX.GetPlayerData()
+
+    elseif GetResourceState('qb-core') == 'started' then
         Framework = "QBcore"
-    elseif Qbox ~= nil then
-        Framework = "Qbox"
+        QBCore = exports['qb-core']:GetCoreObject()
+
+        -- Chargement des données du joueur pour QBcore
+        CreateThread(function()
+            while QBCore.Functions.GetPlayerData() == nil do
+                Wait(100)
+            end
+            PlayerData = QBCore.Functions.GetPlayerData()
+        end)
+
     else
-        print("^1Erreur : Aucun framework détecté !^0")
+        Framework = "Qbox"
+        print("^3Framework non détecté, utilisation par défaut : Qbox.^0")
     end
+
+    print("^2Framework détecté : " .. (Framework or "Aucun") .. "^0")
 end)
 
 -- Envoi d'une notification (compatible avec plusieurs frameworks)

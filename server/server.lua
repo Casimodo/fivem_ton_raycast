@@ -4,8 +4,41 @@
 
 -- end, true)
 
+
+-- Détection automatique du framework
+local Framework = nil
+
+CreateThread(function()
+    if GetResourceState('es_extended') == 'started' then
+        Framework = "ESX"
+        ESX = exports['es_extended']:getSharedObject()
+    elseif GetResourceState('qbx_core') == 'started' then
+        Framework = "Qbox"
+        --Qbox = exports['qbx_core']
+        Qbox = exports['qb-core']:GetCoreObject()
+    elseif GetResourceState('qb-core') == 'started' then
+        Framework = "QBcore"
+        QBCore = exports['qb-core']:GetCoreObject()
+    else
+        Framework = "inc"
+        print("^3Framework non détecté, utilisation par défaut : Error !")
+    end
+
+    print("^2Framework détecté : " .. (Framework or "Aucun") .. "^0")
+end)
+
+function EnsureFrameworkLoaded()
+    while Framework == nil do
+        print("^3En attente de la détection du framework...^0")
+        Wait(100)
+    end
+end
+
 -- Fonction pour enregistrer la commande en fonction du framework
 local function RegisterCommandFramework(commandName, permission, callback)
+
+	EnsureFrameworkLoaded() -- Attente jusqu'à ce que le framework soit chargé
+
     if ESX then
         -- ESX
         ESX.RegisterCommand(commandName, permission, function(xPlayer, args)
@@ -19,7 +52,7 @@ local function RegisterCommandFramework(commandName, permission, callback)
         end)
     elseif Qbox then
         -- Qbox
-        Qbox.Commands.Register(commandName, permission, {}, function(source, args)
+        Qbox.Commands.Add(commandName, permission, {}, false, function(source, args)
             callback(source) -- Pour Qbox, tu peux utiliser directement le `source`
         end)
     else
