@@ -4,7 +4,7 @@ game "gta5"
 name "ton_raycast"
 description "Outil admin pour obtenir des coordonnées, rotations et distances en un clic avec copier-coller."
 author "tontonCasi@twitch"
-version "0.0.2"
+version "1.0.0"
 
 lua54 "yes"
 
