@@ -1,6 +1,7 @@
 ## 📜 Description
 Ce mini projet est une **ressource pour FiveM** (testé sous ESX, QBCore, Qbox) qui permet d'avoir un outils d'administration permettant de récupérer des informations pour les copiers en presse papier.
 
+Cliquez sur l'image pour voir la vidéo !
 [![Nom de la vidéo](https://img.youtube.com/vi/154JMY28I70/0.jpg)](https://www.youtube.com/watch?v=154JMY28I70)
 
 ---
