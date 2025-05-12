@@ -31,3 +31,12 @@ Ce mini projet est une **ressource pour FiveM** (testé sous ESX, QBCore, Qbox) 
 2. Installer la dernière version de [**cfx-server-data**](https://github.com/citizenfx/cfx-server-data).
 3. Copier coller la ressource.
 4. Démarrer la ressource
+
+---
+
+## 📦 Utilisation
+
+Dans la fenêtre de chat faire un simple
+```
+ton_raycast
+```
